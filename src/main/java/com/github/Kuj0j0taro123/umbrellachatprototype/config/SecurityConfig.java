@@ -13,14 +13,22 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
     @Bean
-    public InMemoryUserDetailsManager userDetailsService(){
-        UserDetails user = User.builder()
+    public InMemoryUserDetailsManager userDetailsService() {
+        UserDetails user1 = User.builder()
                 .username("testuser")
                 .password(passwordEncoder().encode("password"))
                 .roles("USER")
                 .build();
-        return new InMemoryUserDetailsManager(user);
+
+        UserDetails user2 = User.builder()
+                .username("adminuser")
+                .password(passwordEncoder().encode("adminpassword"))
+                .roles("USER")
+                .build();
+
+        return new InMemoryUserDetailsManager(user1, user2);
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder(){
