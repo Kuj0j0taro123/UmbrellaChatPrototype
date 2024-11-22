@@ -1,17 +1,23 @@
 package com.github.Kuj0j0taro123.umbrellachatprototype.controller;
 
+import org.springframework.ui.Model;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.security.Principal;
+
 @Controller
 public class ChatController {
 
     @GetMapping("/chat")
-    public String chat() {
+    public String chat(Model model, Principal principal) {
+        model.addAttribute("username", principal.getName());
+        System.out.println(model.getAttribute("username"));
         return "chat";
     }
+
 
 
     @MessageMapping("/sendMessage") // Maps to /app/sendMessage
