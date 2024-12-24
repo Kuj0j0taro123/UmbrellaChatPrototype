@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class ChatController {
@@ -27,6 +28,10 @@ public class ChatController {
         // todo: add chat message history here
         model.addAttribute("username", principal.getName());
         System.out.println(model.getAttribute("username"));
+
+        List<ChatMessage> messageHistory = chatMessageService.findAll();
+        model.addAttribute("message_history", messageHistory);
+
         return "chat";
     }
 
@@ -35,7 +40,7 @@ public class ChatController {
     @MessageMapping("/sendMessage") // Maps to /app/sendMessage
     @SendTo("/topic/messages") // Broadcasts to /topic/messages
     public ChatMessage sendMessage(ChatMessage message) {
-        message.setContent(message.getContent() + "TROLOLOOLLOLOLO");
+        message.setContent(message.getContent());
         chatMessageService.save(message);
         return message;
     }
