@@ -2,54 +2,39 @@ package com.github.Kuj0j0taro123.umbrellachatprototype.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class SecurityConfig {
     @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
-        UserDetails user1 = User.builder()
-                .username("testuser")
-                .password(passwordEncoder().encode("password"))
-                .roles("USER")
-                .build();
-
-        UserDetails user2 = User.builder()
-                .username("adminuser")
-                .password(passwordEncoder().encode("adminpassword"))
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(user1, user2);
-    }
-
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+    public UserDetailsManager userDetailsManager(DataSource dataSource){
+        return new JdbcUserDetailsManager(dataSource);
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/chat", true) // Redirect to /chat after successful login
-                .permitAll()
-                .and()
-                .logout()
-                .logoutSuccessUrl("/login?logout")
-                .permitAll();
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests(configurer ->
+                        configurer.anyRequest().authenticated()
+                )
+                .formLogin(form ->
+                        form.defaultSuccessUrl("/chat", true)
+                );
+
+
+        http.httpBasic();
+        http.csrf().disable();
         return http.build();
     }
-
-
 }
