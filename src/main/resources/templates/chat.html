@@ -27,7 +27,7 @@
 </head>
 <body>
 <div class="container">
-    <h2 class="mt-4">Welcome to WebChat!</h2>
+    <h2 class="mt-4">Umbrella Chat</h2>
     <div id="chat-window" class="border rounded p-3 mb-3">
         <!-- Messages will appear here -->
         <div class="message" th:each="message : ${message_history}" th:classappend="${message.username == username ? 'user' : 'other'}">
